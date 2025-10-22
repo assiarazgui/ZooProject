@@ -1,40 +1,65 @@
+package tn.esprit.gestion.main;
+
+import tn.esprit.gestion.entities.*;
+
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        Zoo zoo1 = new Zoo();
-        Zoo zoo2 = new Zoo();
+        Zoo zoo = new Zoo("Zoo Esprit", 5);
+        Scanner sc = new Scanner(System.in);
+        boolean exit = false;
 
-        // ✅ Instruction 10 : Ajout
-        zoo1.addAnimal(new Animal("Lion", "Félins"));
-        zoo1.addAnimal(new Animal("Tigre", "Félins"));
-        zoo1.addAnimal(new Animal("Elephant", "Mammifères"));
+        while(!exit) {
+            System.out.println("\n=== Menu du Zoo ===");
+            System.out.println("1. Ajouter un animal");
+            System.out.println("2. Supprimer un animal");
+            System.out.println("3. Afficher tous les animaux");
+            System.out.println("4. Trier les animaux par âge");
+            System.out.println("5. Afficher les infos du zoo");
+            System.out.println("6. Quitter");
+            System.out.print("Choix : ");
+            int choice = sc.nextInt();
+            sc.nextLine(); // consommer le \n
 
-        // Tentative doublon
-        boolean added = zoo1.addAnimal(new Animal("Lion", "Félins"));
-        System.out.println("Ajout doublon Lion ? " + added);
-
-        // ✅ Instruction 11 : Affichage
-        System.out.println("Animaux du zoo1 :");
-        zoo1.displayAnimals();
-
-        // ✅ Recherche
-        int index = zoo1.findAnimalByName("Tigre");
-        System.out.println("Index du Tigre : " + index);
-
-        int index2 = zoo1.findAnimalByName("Girafe");
-        System.out.println("Index de la Girafe : " + index2);
-
-        // ✅ Instruction 13 : Suppression
-        boolean removed = zoo1.removeAnimal("Elephant");
-        System.out.println("Suppression Elephant ? " + removed);
-
-        System.out.println("Animaux après suppression :");
-        zoo1.displayAnimals();
-
-        // ✅ Instruction 15 : Comparaison
-        zoo2.addAnimal(new Animal("Girafe", "Herbivores"));
-        zoo2.addAnimal(new Animal("Zèbre", "Herbivores"));
-
-        Zoo plusGrand = zoo1.compareZoo(zoo2);
-        System.out.println("Le zoo avec plus d’animaux est celui avec " + plusGrand.getAnimalCount() + " animaux.");
+            switch(choice) {
+                case 1:
+                    try {
+                        System.out.print("Nom de l'animal: ");
+                        String name = sc.nextLine();
+                        System.out.print("Âge de l'animal: ");
+                        int age = sc.nextInt();
+                        sc.nextLine();
+                        System.out.print("Espèce de l'animal: ");
+                        String species = sc.nextLine();
+                        Animal a = new Animal(name, age, species);
+                        zoo.addAnimal(a);
+                    } catch(Exception e) {
+                        System.out.println("Erreur: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    System.out.print("Nom de l'animal à supprimer: ");
+                    String name = sc.nextLine();
+                    zoo.removeAnimal(name);
+                    break;
+                case 3:
+                    zoo.displayAnimals();
+                    break;
+                case 4:
+                    zoo.sortAnimalsByAge();
+                    break;
+                case 5:
+                    zoo.displayZooInfo();
+                    break;
+                case 6:
+                    exit = true;
+                    System.out.println("Au revoir !");
+                    break;
+                default:
+                    System.out.println("Choix invalide !");
+            }
+        }
+        sc.close();
     }
 }

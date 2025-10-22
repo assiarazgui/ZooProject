@@ -1,78 +1,80 @@
+package tn.esprit.gestion.entities;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class Zoo {
-    private final int NBR_CAGES = 25; // ✅ Instruction 14 : constante
-    private Animal[] animals;
-    private int animalCount; // compteur
+    private String name;
+    private int capacity;
+    private List<Animal> animals;
 
-    public Zoo() {
-        animals = new Animal[NBR_CAGES];
-        animalCount = 0;
+    public Zoo(String name, int capacity) {
+        setName(name);
+        this.capacity = capacity;
+        animals = new ArrayList<>();
     }
 
-    // ✅ Instruction 10 : Ajouter animal
-    public boolean addAnimal(Animal a) {
-        if (isFull()) { // zoo plein
-            return false;
-        }
-        // ✅ Instruction 12 : vérifier unicité
-        if (findAnimalByName(a.getName()) != -1) {
-            return false;
-        }
-        animals[animalCount] = a;
-        animalCount++;
-        return true;
+    public String getName() {
+        return name;
     }
 
-    // ✅ Instruction 11.1 : Afficher animaux
+    public void setName(String name) {
+        if(name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Le nom du zoo ne peut pas être vide.");
+        }
+        this.name = name;
+    }
+
+    public boolean isZooFull() {
+        return animals.size() >= capacity;
+    }
+
+    public void addAnimal(Animal animal) throws ZooFullException {
+        if(isZooFull()) {
+            throw new ZooFullException("Le zoo est plein ! Impossible d'ajouter l'animal : " + animal.getName());
+        }
+        animals.add(animal);
+        System.out.println(animal.getName() + " a été ajouté au zoo.");
+    }
+
+    public void removeAnimal(String name) {
+        Animal toRemove = findAnimal(name);
+        if(toRemove != null) {
+            animals.remove(toRemove);
+            System.out.println(name + " a été retiré du zoo.");
+        } else {
+            System.out.println("Aucun animal nommé " + name + " trouvé.");
+        }
+    }
+
+    public Animal findAnimal(String name) {
+        for(Animal a : animals) {
+            if(a.getName().equalsIgnoreCase(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
     public void displayAnimals() {
-        if (animalCount == 0) {
-            System.out.println("Le zoo est vide.");
-        } else {
-            for (int i = 0; i < animalCount; i++) {
-                System.out.println(animals[i]);
-            }
+        if(animals.isEmpty()) {
+            System.out.println("Aucun animal dans le zoo.");
+            return;
+        }
+        System.out.println("Liste des animaux du zoo :");
+        for(Animal a : animals) {
+            System.out.println(a);
         }
     }
 
-    // ✅ Instruction 11.2 : Recherche par nom
-    public int findAnimalByName(String name) {
-        for (int i = 0; i < animalCount; i++) {
-            if (animals[i].getName().equalsIgnoreCase(name)) {
-                return i;
-            }
-        }
-        return -1;
+    public void displayZooInfo() {
+        System.out.println("Zoo: " + name + ", Capacité: " + capacity + ", Animaux actuels: " + animals.size());
     }
 
-    // ✅ Instruction 13 : Supprimer un animal
-    public boolean removeAnimal(String name) {
-        int index = findAnimalByName(name);
-        if (index == -1) return false;
-
-        // Décaler les animaux vers la gauche
-        for (int i = index; i < animalCount - 1; i++) {
-            animals[i] = animals[i + 1];
-        }
-        animals[animalCount - 1] = null; // dernière case à null
-        animalCount--;
-        return true;
-    }
-
-    // ✅ Instruction 15.1 : Vérifier si zoo est plein
-    public boolean isFull() {
-        return animalCount >= NBR_CAGES;
-    }
-
-    // ✅ Instruction 15.2 : Comparer deux zoos
-    public Zoo compareZoo(Zoo other) {
-        if (this.animalCount >= other.animalCount) {
-            return this;
-        } else {
-            return other;
-        }
-    }
-
-    // Getter pour tests
-    public int getAnimalCount() {
-        return animalCount;
+    public void sortAnimalsByAge() {
+        animals.sort(Comparator.comparingInt(Animal::getAge));
+        System.out.println("Animaux triés par âge :");
+        displayAnimals();
     }
 }
